@@ -1,0 +1,1 @@
+const CHOOSE_CARD = "Kart Seçiniz";

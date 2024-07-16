@@ -1,0 +1,237 @@
+<html>
+<head>
+	<title>Deneme</title>
+	
+	<style>
+	.container {
+		width:100%;
+    	height:100%;
+		margin-top: 10px;
+	}
+	table {
+    	margin: 0 auto; /* or margin: 0 auto 0 auto */
+  	}
+	.slc {
+		width: 75px;
+	}
+	.btn {
+		width: 100px;
+		background-color: rgb(193, 202, 202);
+	}
+	</style>
+	
+	<script src="js/jquery.js"></script>
+	<script src="js/defines.js"></script>
+	<script src="js/functions.js"></script>
+	<script src="js/messages.js"></script>
+</head>
+<body>
+	<div class="container">
+		<table style="text-align:center;" border="2" cellpadding="2" cellspacing="2"  bgcolor="#F0F0F0">
+			<tr align="center">
+				<th colspan="3">Kartlar</th>
+			</tr>
+			<tr>
+				<td width="100" align="center" bgcolor="#E0E0E0">
+					<table border="1" cellpadding="1" cellspacing="1">
+						<tr align="center">
+							<th colspan="2">Bekleyen</th>
+						</tr>
+						<tr align="center">
+							<th>Kart</th>
+							<th>Adet</th>
+						</tr>
+						<tr>
+							<td><select id="slcPendingCardValues" class="slc" multiple size="10"></select></td>
+							<td><select id="slcPendingCardCounts" class="slc" multiple size="10"></select></td>
+						</tr>
+					</table>
+				</td>
+				<td width="100" align="center">
+					<input id="btnToCase" type="button" class="btn" value="Kasa"/><br/><br/>
+					<input id="btnToMe" type="button" class="btn" value="Ben"/><br/><br/>
+					<input id="btnToOther" type="button" class="btn" value="Diğer"/><br/><br/>
+				</td>
+				<td width="100" align="center" bgcolor="#E0E0E0">
+					<table border="1" cellpadding="1" cellspacing="1">
+						<tr align="center">
+							<th colspan="2">Çekilen</th>
+						</tr>
+						<tr align="center">
+							<th>Kart</th>
+							<th>Adet</th>
+						</tr>
+						<tr>
+							<td><select id="slcCompletedCardValues" class="slc" multiple size="10"></select></td>
+							<td><select id="slcCompletedCardCounts" class="slc" multiple size="10"></select></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr align="center">
+				<td colspan="3">
+					High-Low Değeri: <span id="spnHiloNumber"></span>
+				</td>
+			</tr>
+			<tr align="center">
+				<td colspan="3">
+					<input id="btnNewDeck" type="button" class="btn" value="Yeni Deste"/> | 
+					<input id="btnNewTour" type="button" class="btn" value="Yeni El"/>
+				</td>
+			</tr>
+		</table>
+		
+		<br/>
+		
+		<table border="2" cellpadding="2" cellspacing="2" bgcolor="#F0F0F0">
+			<tr>
+				<th colspan="3">Gelen Kartlar</th>
+			</tr>
+			<tr>
+				<th>Kasa</th>
+				<th>Ben</th>
+				<th>Diğer</th>
+			</tr>
+			<tr valign="top">
+				<td width="100" align="center" bgcolor="#F0F0F0">
+					<select id="slcCaseCards" class="slc" multiple size="10"></select>
+					<hr/>
+					<span id="spnCaseSoftTotal"></span>
+					<span></span>
+					<span id="spnCaseTotal">0</span>
+				</td>
+				<td width="100" align="center" bgcolor="#F0F0F0">
+					<select id="slcMyCards" class="slc" multiple size="10"></select>
+					<hr/>
+					<span id="spnMySoftTotal"></span>
+					<span></span>
+					<span id="spnMyTotal">0</span>
+					<hr/>
+					Risk: % <span id="spnMyRisk">0</span>
+				</td>
+				<td width="100" align="center" bgcolor="#F0F0F0">
+					<select id="slcOtherCards" multiple class="slc" size="12"></select>
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+	<script>
+	$(document).ready(function() {
+		$("#btnNewDeck").click(function() {
+			newDeck();
+			updateAll();
+		});
+		
+		$("#btnNewTour").click(function() {
+			resetMyCards();
+			resetCaseCards();
+			resetOtherCards();
+			updateAll();
+		});
+
+		$("#btnToMe").click(function() {
+			var value = $("#slcPendingCardValues").val();
+			if (value.length !== 1) {
+				alert(SLC_MESSAGE);
+				return false;
+			}
+			toMyCards(value[0]);
+			updateAll();
+		});
+
+		$("#btnToCase").click(function() {
+			var value = $("#slcPendingCardValues").val();
+			if (value.length !== 1) {
+				alert(SLC_MESSAGE);
+				return false;
+			}
+			toCaseCards(value[0]);
+			updateAll();
+		});
+
+		$("#btnToOther").click(function() {
+			var value = $("#slcPendingCardValues").val();
+			if (value.length !== 1) {
+				alert(SLC_MESSAGE);
+				return false;
+			}
+			toOtherCards(value[0]);
+			updateAll();
+		});
+
+		$('#slcCompletedCardValues').dblclick(function() {
+			toPendingCards(this.value);
+			updateAll();
+		});
+
+		$('#slcMyCards').dblclick(function() {
+			fromMyCards(this.value);
+			updateAll();
+		});
+
+		$('#slcCaseCards').dblclick(function() {
+			fromCaseCards(this.value);
+			updateAll();
+		});
+
+		$('#slcOtherCards').dblclick(function() {
+			fromOtherCards(this.value);
+			updateAll();
+		});
+			
+		function updateAll() {
+			$("#slcPendingCardValues").empty();
+			$("#slcPendingCardCounts").empty();
+			$("#slcCompletedCardValues").empty();
+			$("#slcCompletedCardCounts").empty();
+			$("#slcMyCards").empty();
+			$("#slcCaseCards").empty();
+			$("#slcOtherCards").empty();
+			$("#spnMySoftTotal").html("");
+			$("#spnCaseSoftTotal").html("");
+
+			for (const [key, value] of Object.entries(pendingCards)) {
+				$("#slcPendingCardValues").append("<option value='"+key+"'>"+key+"</option>");
+				$("#slcPendingCardCounts").append("<option value='"+value+"'>"+value+"</option>");
+			}
+
+			for (const [key, value] of Object.entries(completedCards)) {
+				$("#slcCompletedCardValues").append("<option value='"+key+"'>"+key+"</option>");
+				$("#slcCompletedCardCounts").append("<option value='"+value+"'>"+value+"</option>");
+			}
+
+			for (const [key, value] of Object.entries(myCards)) {
+				$("#slcMyCards").append("<option value='"+value+"'>"+value+"</option>");
+			}
+
+			for (const [key, value] of Object.entries(caseCards)) {
+				$("#slcCaseCards").append("<option value='"+value+"'>"+value+"</option>");
+			}
+
+			for (const [key, value] of Object.entries(otherCards)) {
+				$("#slcOtherCards").append("<option value='"+value+"'>"+value+"</option>");
+			}
+
+			if (getMyTotal() != getMySoftTotal()) {
+				$("#spnMySoftTotal").html(getMySoftTotal() + " | ");
+			}
+			$("#spnMyTotal").html(getMyTotal());
+
+			if (getCaseTotal() != getCaseSoftTotal()) {
+				$("#spnCaseSoftTotal").html(getCaseSoftTotal() + " | ");
+			}
+			$("#spnCaseTotal").html(getCaseTotal());
+
+			$("#spnHiloNumber").html(hiloNumber);
+
+			$("#spnMyRisk").html(getMyRisk());
+		}
+
+		newDeck();
+
+		updateAll();
+	});
+	</script>
+</body>
+<html>
