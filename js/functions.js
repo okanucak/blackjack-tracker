@@ -1,64 +1,37 @@
-function resetPendingCards() {
-	pendingCards = {
-		2: 4 * DECK_COUNT,
-		3: 4 * DECK_COUNT,
-		4: 4 * DECK_COUNT,
-		5: 4 * DECK_COUNT,
-		6: 4 * DECK_COUNT,
-		7: 4 * DECK_COUNT,
-		8: 4 * DECK_COUNT,
-		9: 4 * DECK_COUNT,
-		10: 4 * DECK_COUNT * 4,
-		11: 4 * DECK_COUNT,
-	};
-}
-
-function resetCompletedCards() {
-	completedCards = {
-		2: 0,
-		3: 0,
-		4: 0,
-		5: 0,
-		6: 0,
-		7: 0,
-		8: 0,
-		9: 0,
-		10: 0,
-		11: 0,
-	};
-}
-
-function resetMyCards() {
-	myCards = [];
-}
-
-function resetCaseCards() {
-	caseCards = [];
-}
-
-function resetOtherCards() {
-	otherCards = [];
-}
-
 function newDeck() {
-	resetPendingCards();
-	resetCompletedCards();
-	resetMyCards();
-	resetCaseCards();
-	resetOtherCards();
+	for (var i = 0; i < cards.length; i++) {
+		cards[i].pendingAmount = cards[i].totalAmount;
+		cards[i].completedAmount = 0;
+	}
+	pendingCardCount = DECK_COUNT * 52;
+	hiloNumber = 0;
+	newTour();
 }
 
 function newTour() {
-	resetMyCards();
-	resetCaseCards();
-	resetOtherCards();
+	dealerCards = [];
+	playerCards = [];
+	otherCards = [];
+	fromDealerCards(getCardByRealValue(0));
 }
 
-function getCaseTotal() {
+function getCardByRealValue(realValue) {
+	var card = cards.find(x => x.realValue == realValue);
+	if (typeof card == "undefined") {
+		alert(SLC_MESSAGE);
+		return false;
+	}
+	return card;
+}
+
+function getDealerTotal() {
 	var total = 0;
 	var cnt = 0;
-	for (var i = 0; i < caseCards.length; i++) {
-		var value = caseCards[i];
+	for (var i = 0; i < dealerCards.length; i++) {
+		if (dealerCards[i].realValue == HOLE_CARD_KEY) {
+			continue;
+		}
+		var value = dealerCards[i].realValue;
 		if (value == 11) {
 			cnt++;
 			if (cnt > 1) {
@@ -70,19 +43,22 @@ function getCaseTotal() {
 	return total;
 }
 
-function getCaseSoftTotal() {
+function getDealerSoftTotal() {
 	var total = 0;
-	for (var i = 0; i < caseCards.length; i++) {
-		total += caseCards[i] == 11 ? 1 : caseCards[i];
+	for (var i = 0; i < dealerCards.length; i++) {
+		if (dealerCards[i].realValue == HOLE_CARD_KEY) {
+			continue;
+		}
+		total += dealerCards[i].realValue == 11 ? 1 : dealerCards[i].realValue;
 	}
 	return total;
 }
 
-function getMyTotal() {
+function getPlayerTotal() {
 	var total = 0;
 	var cnt = 0;
-	for (var i = 0; i < myCards.length; i++) {
-		var value = myCards[i];
+	for (var i = 0; i < playerCards.length; i++) {
+		var value = playerCards[i].realValue;
 		if (value == 11) {
 			cnt++;
 			if (cnt > 1) {
@@ -94,109 +70,117 @@ function getMyTotal() {
 	return total;
 }
 
-function getMySoftTotal() {
+function getPlayerSoftTotal() {
 	var total = 0;
-	for (var i = 0; i < myCards.length; i++) {
-		total += myCards[i] == 11 ? 1 : myCards[i];
+	for (var i = 0; i < playerCards.length; i++) {
+		total += playerCards[i].realValue == 11 ? 1 : playerCards[i].realValue;
 	}
 	return total;
 }
 
-function getMyRisk() {
-	var myTotal = getMySoftTotal();
-	var limit = 21 - myTotal;
+function getPlayerRiskFor21() {
+	var playerTotal = getPlayerSoftTotal();
+	var limit = 21 - playerTotal;
 	if (limit >= 10) {
 		return 0;
 	}
 	var pendingTotal = 0;
 	var whiteTotal = 0;
-	for (const [key, value] of Object.entries(pendingCards)) {
-		if (key <= limit) {
-			whiteTotal += value;
+	for (var i = 0; i < cards.length; i++) {
+		if (cards[i].realValue == HOLE_CARD_KEY) {
+			continue;
 		}
-		pendingTotal += value;
+		var value = cards[i].realValue == 11 ? 1 : cards[i].realValue;
+		if (value <= limit) {
+			whiteTotal += cards[i].pendingAmount;
+		}
+		pendingTotal += cards[i].pendingAmount;
 	}
-	var risk = 100 - Math.round(whiteTotal / pendingTotal * 100);
-	return risk;
+	var risk = 100 - whiteTotal / pendingTotal * 100;
+	return risk.toFixed(4);
 }
 
-function toMyCards(value) {
-	myCards.push(parseInt(value));
-	toCompletedCards(value);
+function toPlayerCards(card) {
+	playerCards.push(card);
+	toCompletedCards(card);
 }
 
-function toCaseCards(value) {
-	caseCards.push(parseInt(value));
-	toCompletedCards(value);
+function toDealerCards(card) {
+	dealerCards.push(card);
+	toCompletedCards(card);
 }
 
-function toOtherCards(value) {
-	otherCards.push(parseInt(value));
-	toCompletedCards(value);
+function toOtherCards(card) {
+	otherCards.push(card);
+	toCompletedCards(card);
 }
 
-function fromMyCards(value) {
+function fromPlayerCards(card) {
 	var arr = [];
-	var cnt = 0;
-	for (var i = 0; i < myCards.length; i++) {
-		if (myCards[i] == value && cnt == 0) {
-			cnt++;
+	var finded = false;
+	for (var i = 0; i < playerCards.length; i++) {
+		if (playerCards[i].realValue == card.realValue && ! finded) {
+			finded = true;
 		} else {
-			arr.push(myCards[i]);
+			arr.push(playerCards[i]);
 		}
 	}
-	myCards = arr;
-	toPendingCards(value);
+	playerCards = arr;
+	toPendingCards(card);
 }
 
-function fromCaseCards(value) {
+function fromDealerCards(card) {
 	var arr = [];
-	var cnt = 0;
-	for (var i = 0; i < caseCards.length; i++) {
-		if (caseCards[i] == value && cnt == 0) {
-			cnt++;
+	var finded = false;
+	for (var i = 0; i < dealerCards.length; i++) {
+		if (dealerCards[i].realValue == card.realValue && ! finded) {
+			finded = true;
 		} else {
-			arr.push(caseCards[i]);
+			arr.push(dealerCards[i]);
 		}
 	}
-	caseCards = arr;
-	toPendingCards(value);
+	dealerCards = arr;
+	toPendingCards(card);
 }
 
-function fromOtherCards(value) {
+function fromOtherCards(card) {
 	var arr = [];
-	var cnt = 0;
+	var finded = 0;
 	for (var i = 0; i < otherCards.length; i++) {
-		if (otherCards[i] == value && cnt == 0) {
-			cnt++;
+		if (otherCards[i].realValue == card.realValue && ! finded) {
+			finded = true;
 		} else {
 			arr.push(otherCards[i]);
 		}
 	}
 	otherCards = arr;
-	toPendingCards(value);
+	toPendingCards(card);
 }
 
-function toCompletedCards(value) {
-	if (pendingCards[value] > 0) {
-		pendingCards[value]--;
-		completedCards[value]++;
-		if (value == 10 || value == 11) {
+function toCompletedCards(card) {
+	if (card.pendingAmount > 0) {
+		pendingCardCount--;
+		card.pendingAmount--;
+		card.completedAmount++;
+		if (card.hilo == HIGHT) {
 			hiloNumber--;
-		} else if (value == 2 || value == 3 || value == 4 || value == 5 || value == 6) {
+		} else if (card.hilo == LOW) {
 			hiloNumber++;
 		}
 	}
 }
 
-function toPendingCards(value) {
-	if (completedCards[value] > 0) {
-		pendingCards[value]++;
-		completedCards[value]--;
-		if (value == 10 || value == 11) {
+function toPendingCards(card) {
+	if (card.completedAmount > 0) {
+		pendingCardCount++;
+		card.pendingAmount++;
+		card.completedAmount--;
+		if (card.hilo == HIGHT) {
 			hiloNumber++;
-		} else if (value == 2 || value == 3 || value == 4 || value == 5 || value == 6) {
+		} else if (card.hilo == LOW) {
 			hiloNumber--;
+		} else if (card.realValue == HOLE_CARD_KEY) {
+			fromDealerCards(card);
 		}
 	}
 }

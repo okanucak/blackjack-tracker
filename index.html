@@ -1,120 +1,113 @@
 <html>
 <head>
-	<title>Deneme</title>
+	<title>BlackJack Tracker</title>
 	
-	<style>
-	.container {
-		width:100%;
-    	height:100%;
-		margin-top: 10px;
-	}
-	table {
-    	margin: 0 auto; /* or margin: 0 auto 0 auto */
-  	}
-	.slc {
-		width: 75px;
-	}
-	.btn {
-		width: 100px;
-		background-color: rgb(193, 202, 202);
-	}
-	</style>
-	
-	<script src="js/jquery.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<link rel="stylesheet" href="css/styles.css"/>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	<script src="js/defines.js"></script>
 	<script src="js/functions.js"></script>
 	<script src="js/messages.js"></script>
 </head>
 <body>
-	<div class="container">
-		<table style="text-align:center;" border="2" cellpadding="2" cellspacing="2"  bgcolor="#F0F0F0">
-			<tr align="center">
-				<th colspan="3">Kartlar</th>
-			</tr>
-			<tr>
-				<td width="100" align="center" bgcolor="#E0E0E0">
-					<table border="1" cellpadding="1" cellspacing="1">
-						<tr align="center">
-							<th colspan="2">Bekleyen</th>
-						</tr>
-						<tr align="center">
-							<th>Kart</th>
-							<th>Adet</th>
-						</tr>
-						<tr>
-							<td><select id="slcPendingCardValues" class="slc" multiple size="10"></select></td>
-							<td><select id="slcPendingCardCounts" class="slc" multiple size="10"></select></td>
-						</tr>
-					</table>
-				</td>
-				<td width="100" align="center">
-					<input id="btnToCase" type="button" class="btn" value="Kasa"/><br/><br/>
-					<input id="btnToMe" type="button" class="btn" value="Ben"/><br/><br/>
-					<input id="btnToOther" type="button" class="btn" value="Diğer"/><br/><br/>
-				</td>
-				<td width="100" align="center" bgcolor="#E0E0E0">
-					<table border="1" cellpadding="1" cellspacing="1">
-						<tr align="center">
-							<th colspan="2">Çekilen</th>
-						</tr>
-						<tr align="center">
-							<th>Kart</th>
-							<th>Adet</th>
-						</tr>
-						<tr>
-							<td><select id="slcCompletedCardValues" class="slc" multiple size="10"></select></td>
-							<td><select id="slcCompletedCardCounts" class="slc" multiple size="10"></select></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-			<tr align="center">
-				<td colspan="3">
-					High-Low Değeri: <span id="spnHiloNumber"></span>
-				</td>
-			</tr>
-			<tr align="center">
-				<td colspan="3">
-					<input id="btnNewDeck" type="button" class="btn" value="Yeni Deste"/> | 
-					<input id="btnNewTour" type="button" class="btn" value="Yeni El"/>
-				</td>
-			</tr>
-		</table>
-		
-		<br/>
-		
-		<table border="2" cellpadding="2" cellspacing="2" bgcolor="#F0F0F0">
-			<tr>
-				<th colspan="3">Gelen Kartlar</th>
-			</tr>
-			<tr>
-				<th>Kasa</th>
-				<th>Ben</th>
-				<th>Diğer</th>
-			</tr>
-			<tr valign="top">
-				<td width="100" align="center" bgcolor="#F0F0F0">
-					<select id="slcCaseCards" class="slc" multiple size="10"></select>
-					<hr/>
-					<span id="spnCaseSoftTotal"></span>
-					<span></span>
-					<span id="spnCaseTotal">0</span>
-				</td>
-				<td width="100" align="center" bgcolor="#F0F0F0">
-					<select id="slcMyCards" class="slc" multiple size="10"></select>
-					<hr/>
-					<span id="spnMySoftTotal"></span>
-					<span></span>
-					<span id="spnMyTotal">0</span>
-					<hr/>
-					Risk: % <span id="spnMyRisk">0</span>
-				</td>
-				<td width="100" align="center" bgcolor="#F0F0F0">
-					<select id="slcOtherCards" multiple class="slc" size="12"></select>
-				</td>
-			</tr>
-		</table>
+	<div class="container text-center">
+		<div class="alert alert-primary" role="alert">
+			High-Low değeri: <b><span id="spnHiloNumber"></span></b>
+		</div>
+		<div class="alert alert-primary" role="alert">
+			Oyuncunun 21'i geçme ihtimali: <b>%<span id="spnPlayerRisk">0</span></b>
+		</div>
+		<div class="row align-items-center">
+			<div class="col align-items-center" align="center">
+				<table>
+					<tr>
+						<td>
+							<hr/>
+							<table>
+								<tr align="center">
+									<th colspan="2">Bekleyen Kartlar</th>
+								</tr>
+								<tr align="center">
+									<th>Kart</th>
+									<th>Adet</th>
+								</tr>
+								<tr>
+									<td><select id="slcPendingCardValues" class="slc" multiple size="11"></select></td>
+									<td><select id="slcPendingCardCounts" class="slc" multiple disabled size="11"></select></td>
+								</tr>
+							</table>
+						</td>
+						<td align="center" valign="center">
+							<br/><br/><br/><br/>
+							<hr/>
+							<div>
+								<input id="btnToDealer" type="button" class="btn btn-primary btn-sm" value="Krupiye"/>
+								<input id="btnToPlayer" type="button" class="btn btn-primary btn-sm" value="Oyuncu"/>
+								<input id="btnToOther" type="button" class="btn btn-primary btn-sm" value="Diğer"/>
+							</div>
+							<hr/>
+							<div>
+								<input id="btnNewTour" type="button" class="btn btn-warning btn-sm" value="Yeni El"/>
+								<input id="btnResetTour" type="button" class="btn btn-danger btn-sm" value="Eli Sıfırla"/>
+								<input id="btnNewDeck" type="button" class="btn btn-danger btn-sm" value="Yeni Deste"/>
+							</div>
+							<hr/>
+						</td>
+						<td align="center">
+							<hr/>
+							<table>
+								<tr align="center">
+									<th colspan="2">Çekilen Kartlar</th>
+								</tr>
+								<tr align="center">
+									<th>Kart</th>
+									<th>Adet</th>
+								</tr>
+								<tr>
+									<td><select id="slcCompletedCardValues" class="slc" multiple size="11"></select></td>
+									<td><select id="slcCompletedCardCounts" class="slc" multiple disabled size="11"></select></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="row align-items-center">
+			<div class="col align-items-center" align="center">
+				<hr/>
+				<table>
+					<tr align="center">
+						<th colspan="3">Gelen Kartlar</th>
+					</tr>
+					<tr align="center">
+						<th>Krupiye</th>
+						<th>Oyuncu</th>
+						<th>Diğerleri</th>
+					</tr>
+					<tr valign="top">
+						<td align="center">
+							<select id="slcDealerCards" class="slc" multiple size="10"></select>
+							<br/>
+							<span id="spnDealerSoftTotal"></span>
+							<span id="spnDealerTotal">0</span>
+						</td>
+						<td align="center">
+							<select id="slcPlayerCards" class="slc" multiple size="10"></select>
+							<br/>
+							<span id="spnPlayerSoftTotal"></span>
+							<span id="spnPlayerTotal">0</span>
+						</td>
+						<td align="center">
+							<select id="slcOtherCards" multiple class="slc" size="10"></select>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 	</div>
+	
 	
 	<script>
 	$(document).ready(function() {
@@ -124,29 +117,43 @@
 		});
 		
 		$("#btnNewTour").click(function() {
-			resetMyCards();
-			resetCaseCards();
-			resetOtherCards();
+			newTour();
 			updateAll();
 		});
 
-		$("#btnToMe").click(function() {
+		$("#btnResetTour").click(function() {
+			while (dealerCards.length > 0) {
+				fromDealerCards(dealerCards[0]);
+				updateAll();
+			}
+			while (playerCards.length > 0) {
+				fromPlayerCards(playerCards[0]);
+				updateAll();
+			}
+			while (otherCards.length > 0) {
+				fromOtherCards(otherCards[0]);
+				updateAll();
+			}
+			updateAll();
+		});
+
+		$("#btnToPlayer").click(function() {
 			var value = $("#slcPendingCardValues").val();
 			if (value.length !== 1) {
 				alert(SLC_MESSAGE);
 				return false;
 			}
-			toMyCards(value[0]);
+			toPlayerCards(getCardByRealValue(value[0]));
 			updateAll();
 		});
 
-		$("#btnToCase").click(function() {
+		$("#btnToDealer").click(function() {
 			var value = $("#slcPendingCardValues").val();
 			if (value.length !== 1) {
 				alert(SLC_MESSAGE);
 				return false;
 			}
-			toCaseCards(value[0]);
+			toDealerCards(getCardByRealValue(value[0]));
 			updateAll();
 		});
 
@@ -156,27 +163,27 @@
 				alert(SLC_MESSAGE);
 				return false;
 			}
-			toOtherCards(value[0]);
+			toOtherCards(getCardByRealValue(value[0]));
 			updateAll();
 		});
 
-		$('#slcCompletedCardValues').dblclick(function() {
-			toPendingCards(this.value);
+		$('#slcPendingCardValues').dblclick(function() {
+			toDealerCards(getCardByRealValue(this.value));
 			updateAll();
 		});
 
-		$('#slcMyCards').dblclick(function() {
-			fromMyCards(this.value);
+		$('#slcPlayerCards').dblclick(function() {
+			fromPlayerCards(getCardByRealValue(this.value));
 			updateAll();
 		});
 
-		$('#slcCaseCards').dblclick(function() {
-			fromCaseCards(this.value);
+		$('#slcDealerCards').dblclick(function() {
+			fromDealerCards(getCardByRealValue(this.value));
 			updateAll();
 		});
 
 		$('#slcOtherCards').dblclick(function() {
-			fromOtherCards(this.value);
+			fromOtherCards(getCardByRealValue(this.value));
 			updateAll();
 		});
 			
@@ -185,47 +192,47 @@
 			$("#slcPendingCardCounts").empty();
 			$("#slcCompletedCardValues").empty();
 			$("#slcCompletedCardCounts").empty();
-			$("#slcMyCards").empty();
-			$("#slcCaseCards").empty();
+			$("#slcPlayerCards").empty();
+			$("#slcDealerCards").empty();
 			$("#slcOtherCards").empty();
-			$("#spnMySoftTotal").html("");
-			$("#spnCaseSoftTotal").html("");
+			$("#spnPlayerSoftTotal").html("");
+			$("#spnDealerSoftTotal").html("");
 
-			for (const [key, value] of Object.entries(pendingCards)) {
-				$("#slcPendingCardValues").append("<option value='"+key+"'>"+key+"</option>");
-				$("#slcPendingCardCounts").append("<option value='"+value+"'>"+value+"</option>");
+			for (var i = 0; i < cards.length; i++) {
+				$("#slcPendingCardValues").append("<option value='"+cards[i].realValue+"'>"+cards[i].displayValue+"</option>");
+				$("#slcPendingCardCounts").append("<option value='"+cards[i].pendingAmount+"'>"+cards[i].pendingAmount+"</option>");
 			}
 
-			for (const [key, value] of Object.entries(completedCards)) {
-				$("#slcCompletedCardValues").append("<option value='"+key+"'>"+key+"</option>");
-				$("#slcCompletedCardCounts").append("<option value='"+value+"'>"+value+"</option>");
+			for (var i = 0; i < cards.length; i++) {
+				$("#slcCompletedCardValues").append("<option value='"+cards[i].realValue+"'>"+cards[i].displayValue+"</option>");
+				$("#slcCompletedCardCounts").append("<option value='"+cards[i].completedAmount+"'>"+cards[i].completedAmount+"</option>");
 			}
 
-			for (const [key, value] of Object.entries(myCards)) {
-				$("#slcMyCards").append("<option value='"+value+"'>"+value+"</option>");
+			for (var i = 0; i < playerCards.length; i++) {
+				$("#slcPlayerCards").append("<option value='"+playerCards[i].realValue+"'>"+playerCards[i].displayValue+"</option>");
 			}
 
-			for (const [key, value] of Object.entries(caseCards)) {
-				$("#slcCaseCards").append("<option value='"+value+"'>"+value+"</option>");
+			for (var i = 0; i < dealerCards.length; i++) {
+				$("#slcDealerCards").append("<option value='"+dealerCards[i].realValue+"'>"+dealerCards[i].displayValue+"</option>");
 			}
 
-			for (const [key, value] of Object.entries(otherCards)) {
-				$("#slcOtherCards").append("<option value='"+value+"'>"+value+"</option>");
+			for (var i = 0; i < otherCards.length; i++) {
+				$("#slcOtherCards").append("<option value='"+otherCards[i].realValue+"'>"+otherCards[i].displayValue+"</option>");
 			}
 
-			if (getMyTotal() != getMySoftTotal()) {
-				$("#spnMySoftTotal").html(getMySoftTotal() + " | ");
+			if (getPlayerTotal() != getPlayerSoftTotal()) {
+				$("#spnPlayerSoftTotal").html(getPlayerSoftTotal() + " | ");
 			}
-			$("#spnMyTotal").html(getMyTotal());
+			$("#spnPlayerTotal").html(getPlayerTotal());
 
-			if (getCaseTotal() != getCaseSoftTotal()) {
-				$("#spnCaseSoftTotal").html(getCaseSoftTotal() + " | ");
+			if (getDealerTotal() != getDealerSoftTotal()) {
+				$("#spnDealerSoftTotal").html(getDealerSoftTotal() + " | ");
 			}
-			$("#spnCaseTotal").html(getCaseTotal());
+			$("#spnDealerTotal").html(getDealerTotal());
 
 			$("#spnHiloNumber").html(hiloNumber);
 
-			$("#spnMyRisk").html(getMyRisk());
+			$("#spnPlayerRisk").html(getPlayerRiskFor21());
 		}
 
 		newDeck();
