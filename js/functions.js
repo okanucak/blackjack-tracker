@@ -12,7 +12,6 @@ function newTour() {
 	dealerCards = [];
 	playerCards = [];
 	otherCards = [];
-	fromDealerCards(getCardByRealValue(0));
 }
 
 function getCardByRealValue(realValue) {
@@ -28,9 +27,6 @@ function getDealerTotal() {
 	var total = 0;
 	var cnt = 0;
 	for (var i = 0; i < dealerCards.length; i++) {
-		if (dealerCards[i].realValue == HOLE_CARD_KEY) {
-			continue;
-		}
 		var value = dealerCards[i].realValue;
 		if (value == 11) {
 			cnt++;
@@ -46,9 +42,6 @@ function getDealerTotal() {
 function getDealerSoftTotal() {
 	var total = 0;
 	for (var i = 0; i < dealerCards.length; i++) {
-		if (dealerCards[i].realValue == HOLE_CARD_KEY) {
-			continue;
-		}
 		total += dealerCards[i].realValue == 11 ? 1 : dealerCards[i].realValue;
 	}
 	return total;
@@ -87,9 +80,6 @@ function getPlayerRiskFor21() {
 	var pendingTotal = 0;
 	var whiteTotal = 0;
 	for (var i = 0; i < cards.length; i++) {
-		if (cards[i].realValue == HOLE_CARD_KEY) {
-			continue;
-		}
 		var value = cards[i].realValue == 11 ? 1 : cards[i].realValue;
 		if (value <= limit) {
 			whiteTotal += cards[i].pendingAmount;
@@ -179,9 +169,6 @@ function toPendingCards(card) {
 			hiloNumber++;
 		} else if (card.hilo == LOW) {
 			hiloNumber--;
-		} else if (card.realValue == HOLE_CARD_KEY) {
-			fromDealerCards(card);
 		}
 	}
 }
-

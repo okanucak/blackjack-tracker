@@ -4,8 +4,6 @@
 
 // Constants
 const DECK_COUNT = 8;
-const HOLE_CARD_KEY = 0;
-const HOLE_CARD_VALUE = "?";
 const HIGHT = "hight";
 const LOW = "low";
 
@@ -18,16 +16,6 @@ var hiloNumber = 0;
 
 // Card List
 var cards = [
-    {
-        realValue: HOLE_CARD_KEY,
-        displayValue: HOLE_CARD_VALUE,
-        totalAmount: 1,
-        pendingAmount: 1,
-        completedAmount: 0,
-        playerRate: 0,
-        dealerRate: 0,
-        hilo: null,
-    },
     {
         realValue: 2,
         displayValue: "2",

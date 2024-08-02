@@ -33,8 +33,8 @@
 									<th>Adet</th>
 								</tr>
 								<tr>
-									<td><select id="slcPendingCardValues" class="slc" multiple size="11"></select></td>
-									<td><select id="slcPendingCardCounts" class="slc" multiple disabled size="11"></select></td>
+									<td><select id="slcPendingCardValues" class="slc" multiple size="10"></select></td>
+									<td><select id="slcPendingCardCounts" class="slc" multiple disabled size="10"></select></td>
 								</tr>
 							</table>
 						</td>
@@ -65,8 +65,8 @@
 									<th>Adet</th>
 								</tr>
 								<tr>
-									<td><select id="slcCompletedCardValues" class="slc" multiple size="11"></select></td>
-									<td><select id="slcCompletedCardCounts" class="slc" multiple disabled size="11"></select></td>
+									<td><select id="slcCompletedCardValues" class="slc" multiple size="10"></select></td>
+									<td><select id="slcCompletedCardCounts" class="slc" multiple disabled size="10"></select></td>
 								</tr>
 							</table>
 						</td>
@@ -76,38 +76,65 @@
 		</div>
 		<div class="row align-items-center">
 			<div class="col align-items-center" align="center">
-				<hr/>
 				<table>
-					<tr align="center">
-						<th colspan="3">Gelen Kartlar</th>
-					</tr>
-					<tr align="center">
-						<th>Krupiye</th>
-						<th>Oyuncu</th>
-						<th>Diğerleri</th>
-					</tr>
-					<tr valign="top">
-						<td align="center">
-							<select id="slcDealerCards" class="slc" multiple size="10"></select>
-							<br/>
-							<span id="spnDealerSoftTotal"></span>
-							<span id="spnDealerTotal">0</span>
+					<tr>
+						<td>
+							<hr/>
+							<table>
+								<tr align="center">
+									<th colspan="3">Gelen Kartlar</th>
+								</tr>
+								<tr align="center">
+									<th>Krupiye</th>
+									<th>Oyuncu</th>
+									<th>Diğerleri</th>
+								</tr>
+								<tr valign="top">
+									<td align="center">
+										<select id="slcDealerCards" class="slc" multiple size="10"></select>
+										<br/>
+										<span id="spnDealerSoftTotal"></span>
+										<span id="spnDealerTotal">0</span>
+									</td>
+									<td align="center">
+										<select id="slcPlayerCards" class="slc" multiple size="10"></select>
+										<br/>
+										<span id="spnPlayerSoftTotal"></span>
+										<span id="spnPlayerTotal">0</span>
+									</td>
+									<td align="center">
+										<select id="slcOtherCards" multiple class="slc" size="10"></select>
+									</td>
+								</tr>
+							</table>
 						</td>
-						<td align="center">
-							<select id="slcPlayerCards" class="slc" multiple size="10"></select>
-							<br/>
-							<span id="spnPlayerSoftTotal"></span>
-							<span id="spnPlayerTotal">0</span>
+						<td width="100">
 						</td>
-						<td align="center">
-							<select id="slcOtherCards" multiple class="slc" size="10"></select>
+						<td valign="top">
+							<hr/>
+							<table>
+								<tr align="center">
+									<th colspan="3">Gelebilecek Kartlar</th>
+								</tr>
+								<tr align="center">
+									<th>Kart</th>
+									<th>Yüzde</th>
+								</tr>
+								<tr valign="top">
+									<td align="center">
+										<select id="slcProbablyCardsValue" class="slc" multiple disabled size="10"></select>
+									</td>
+									<td align="center">
+										<select id="slcProbablyCardsRate" class="slc" multiple disabled size="10"></select>
+									</td>
+								</tr>
+							</table>
 						</td>
 					</tr>
 				</table>
 			</div>
 		</div>
 	</div>
-	
 	
 	<script>
 	$(document).ready(function() {
@@ -195,6 +222,8 @@
 			$("#slcPlayerCards").empty();
 			$("#slcDealerCards").empty();
 			$("#slcOtherCards").empty();
+			$("#slcProbablyCardsValue").empty();
+			$("#slcProbablyCardsRate").empty();
 			$("#spnPlayerSoftTotal").html("");
 			$("#spnDealerSoftTotal").html("");
 
@@ -233,6 +262,14 @@
 			$("#spnHiloNumber").html(hiloNumber);
 
 			$("#spnPlayerRisk").html(getPlayerRiskFor21());
+
+			var probablyCards = [...cards];
+			probablyCards.sort((x, y) => y.pendingAmount - x.pendingAmount);
+			for (var i = 0; i < probablyCards.length; i++) {
+				var rate = (probablyCards[i].pendingAmount / pendingCardCount * 100).toFixed(2);
+				$("#slcProbablyCardsValue").append("<option value='"+probablyCards[i].realValue+"'>"+probablyCards[i].displayValue+"</option>");
+				$("#slcProbablyCardsRate").append("<option value='"+rate+"'>"+rate+"</option>");
+			}
 		}
 
 		newDeck();
