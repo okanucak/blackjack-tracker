@@ -42,15 +42,19 @@
 							<br/><br/><br/><br/>
 							<hr/>
 							<div>
+								<select id="slcDeckCount"></select>
+							</div>
+							<hr/>
+							<div>
 								<input id="btnToDealer" type="button" class="btn btn-primary btn-sm" value="Krupiye"/>
 								<input id="btnToPlayer" type="button" class="btn btn-primary btn-sm" value="Oyuncu"/>
 								<input id="btnToOther" type="button" class="btn btn-primary btn-sm" value="Diğer"/>
 							</div>
 							<hr/>
 							<div>
-								<input id="btnNewTour" type="button" class="btn btn-warning btn-sm" value="Yeni El"/>
-								<input id="btnResetTour" type="button" class="btn btn-danger btn-sm" value="Eli Sıfırla"/>
-								<input id="btnNewDeck" type="button" class="btn btn-danger btn-sm" value="Yeni Deste"/>
+								<input id="btnNewTour" type="button" class="btn btn-secondary btn-sm" value="Yeni El"/>
+								<input id="btnResetTour" type="button" class="btn btn-warning btn-sm" value="Eli Sıfırla"/>
+								<input id="btnSuffle" type="button" class="btn btn-danger btn-sm" value="Karıştır"/>
 							</div>
 							<hr/>
 						</td>
@@ -138,8 +142,14 @@
 	
 	<script>
 	$(document).ready(function() {
-		$("#btnNewDeck").click(function() {
-			newDeck();
+		$("#slcDeckCount").on('change', function() {
+			deckCount = parseInt(this.value);
+			suffle();
+			updateAll();
+		});
+
+		$("#btnSuffle").click(function() {
+			suffle();
 			updateAll();
 		});
 		
@@ -215,6 +225,7 @@
 		});
 			
 		function updateAll() {
+			$("#slcDeckCount").empty();
 			$("#slcPendingCardValues").empty();
 			$("#slcPendingCardCounts").empty();
 			$("#slcCompletedCardValues").empty();
@@ -226,6 +237,11 @@
 			$("#slcProbablyCardsRate").empty();
 			$("#spnPlayerSoftTotal").html("");
 			$("#spnDealerSoftTotal").html("");
+
+			for (var i = 0; i < DECK_COUNTS.length; i++) {
+				var selected = DECK_COUNTS[i] == deckCount ? 'selected' : '';
+				$("#slcDeckCount").append("<option value='"+DECK_COUNTS[i]+"' " + selected + ">"+DECK_COUNTS[i]+" Deste</option>");
+			}
 
 			for (var i = 0; i < cards.length; i++) {
 				$("#slcPendingCardValues").append("<option value='"+cards[i].realValue+"'>"+cards[i].displayValue+"</option>");
@@ -272,7 +288,7 @@
 			}
 		}
 
-		newDeck();
+		suffle();
 
 		updateAll();
 	});
