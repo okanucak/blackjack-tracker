@@ -8,7 +8,8 @@ function suffle() {
 			completedAmount: 0,
 			playerRate: 0,
 			dealerRate: 0,
-			hilo: LOW,
+			hilo: 1,
+			omegaII: 1,
 		},
 		{
 			realValue: 3,
@@ -18,7 +19,8 @@ function suffle() {
 			completedAmount: 0,
 			playerRate: 0,
 			dealerRate: 0,
-			hilo: LOW,
+			hilo: 1,
+			omegaII: 1,
 		},
 		{
 			realValue: 4,
@@ -28,7 +30,8 @@ function suffle() {
 			completedAmount: 0,
 			playerRate: 0,
 			dealerRate: 0,
-			hilo: LOW,
+			hilo: 1,
+			omegaII: 2,
 		},
 		{
 			realValue: 5,
@@ -38,7 +41,8 @@ function suffle() {
 			completedAmount: 0,
 			playerRate: 0,
 			dealerRate: 0,
-			hilo: LOW,
+			hilo: 1,
+			omegaII: 2,
 		},
 		{
 			realValue: 6,
@@ -48,7 +52,8 @@ function suffle() {
 			completedAmount: 0,
 			playerRate: 0,
 			dealerRate: 0,
-			hilo: LOW,
+			hilo: 1,
+			omegaII: 2,
 		},
 		{
 			realValue: 7,
@@ -58,7 +63,8 @@ function suffle() {
 			completedAmount: 0,
 			playerRate: 0,
 			dealerRate: 0,
-			hilo: null,
+			hilo: 0,
+			omegaII: 1,
 		},
 		{
 			realValue: 8,
@@ -68,7 +74,8 @@ function suffle() {
 			completedAmount: 0,
 			playerRate: 0,
 			dealerRate: 0,
-			hilo: null,
+			hilo: 0,
+			omegaII: 0,
 		},
 		{
 			realValue: 9,
@@ -78,7 +85,8 @@ function suffle() {
 			completedAmount: 0,
 			playerRate: 0,
 			dealerRate: 0,
-			hilo: null,
+			hilo: 0,
+			omegaII: -1,
 		},
 		{
 			realValue: 10,
@@ -88,7 +96,8 @@ function suffle() {
 			completedAmount: 0,
 			playerRate: 0,
 			dealerRate: 0,
-			hilo: HIGHT,
+			hilo: -1,
+			omegaII: -2,
 		},
 		{
 			realValue: 11,
@@ -98,13 +107,18 @@ function suffle() {
 			completedAmount: 0,
 			playerRate: 0,
 			dealerRate: 0,
-			hilo: HIGHT,
+			hilo: -1,
+			omegaII: 0,
 		},
 	];
 
 	pendingCardCount = deckCount * 52;
 	
 	hiloNumber = 0;
+	hiloValue = 0;
+
+	omegaIINumber = 0;
+	omegaIIValue = 0;
 	
 	newTour();
 }
@@ -253,11 +267,10 @@ function toCompletedCards(card) {
 		pendingCardCount--;
 		card.pendingAmount--;
 		card.completedAmount++;
-		if (card.hilo == HIGHT) {
-			hiloNumber--;
-		} else if (card.hilo == LOW) {
-			hiloNumber++;
-		}
+		hiloNumber += card.hilo;
+		hiloValue = getRateByNumber(hiloNumber);
+		omegaIINumber += card.omegaII;
+		omegaIIValue = getRateByNumber(omegaIINumber);
 	}
 }
 
@@ -266,10 +279,14 @@ function toPendingCards(card) {
 		pendingCardCount++;
 		card.pendingAmount++;
 		card.completedAmount--;
-		if (card.hilo == HIGHT) {
-			hiloNumber++;
-		} else if (card.hilo == LOW) {
-			hiloNumber--;
-		}
+		hiloNumber -= card.hilo;
+		hiloValue = getRateByNumber(hiloNumber);
+		omegaIINumber -= card.omegaII;
+		omegaIIValue = getRateByNumber(omegaIINumber);
 	}
+}
+
+function getRateByNumber(number) {
+	var rate = number / (pendingCardCount / 52);
+	return rate.toFixed(4);
 }

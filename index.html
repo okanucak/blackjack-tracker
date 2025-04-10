@@ -13,10 +13,10 @@
 <body>
 	<div class="container text-center">
 		<div class="alert alert-primary" role="alert">
-			High-Low değeri: <b><span id="spnHiloNumber"></span></b>
+			High-Low: <b><span id="spnHiloNumber"></span></b> | <b><span id="spnHiloValue"></span></b>
 		</div>
 		<div class="alert alert-primary" role="alert">
-			Oyuncunun 21'i geçme ihtimali: <b>%<span id="spnPlayerRisk">0</span></b>
+			Omega II: <b><span id="spnOmegaIINumber"></span></b> | <b><span id="spnOmegaIIValue"></span></b>
 		</div>
 		<div class="row align-items-center">
 			<div class="col align-items-center" align="center">
@@ -137,6 +137,9 @@
 					</tr>
 				</table>
 			</div>
+		</div>
+		<div class="alert alert-primary" role="alert">
+			Oyuncunun 21'i geçme ihtimali: <b>%<span id="spnPlayerRisk">0</span></b>
 		</div>
 	</div>
 	
@@ -276,6 +279,10 @@
 			$("#spnDealerTotal").html(getDealerTotal());
 
 			$("#spnHiloNumber").html(hiloNumber);
+			$("#spnHiloValue").html(hiloValue);
+
+			$("#spnOmegaIINumber").html(omegaIINumber);
+			$("#spnOmegaIIValue").html(omegaIIValue);
 
 			$("#spnPlayerRisk").html(getPlayerRiskFor21());
 
