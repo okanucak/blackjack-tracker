@@ -6,7 +6,7 @@
 const DECK_COUNTS = [1, 2, 4, 6, 8];
 
 // Variables
-var deckCount = 6;
+var deckCount = 8;
 var cards = [];
 var dealerCards = [];
 var playerCards = [];

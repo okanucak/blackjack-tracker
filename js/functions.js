@@ -202,7 +202,7 @@ function getPlayerRiskFor21() {
 		pendingTotal += cards[i].pendingAmount;
 	}
 	var risk = 100 - whiteTotal / pendingTotal * 100;
-	return risk.toFixed(4);
+	return risk.toFixed(0);
 }
 
 function toPlayerCards(card) {
@@ -288,5 +288,5 @@ function toPendingCards(card) {
 
 function getRateByNumber(number) {
 	var rate = number / (pendingCardCount / 52);
-	return rate.toFixed(4);
+	return rate.toFixed(1);
 }
